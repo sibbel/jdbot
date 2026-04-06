@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "polo-futures": {
+      "source": "poloniex/polo-skills-hub",
+      "ref": "master",
+      "sourceType": "github",
+      "computedHash": "e4427ad2dd824bfd4bb2077dba5aca9f4b3a0ae82ecf64022bfd3acd5c1d7ca9"
+    }
+  }
+}
