@@ -1,36 +1,58 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DockSlot – Zeitfenstermanagement
 
-## Getting Started
+Ein Buchungssystem für Wareneingangsdocks in Logistikzentren. Spediteure können Zeitfenster an Rampen reservieren; Disponenten behalten per Rasteransicht den Überblick und pflegen den Status der Anlieferungen.
 
-First, run the development server:
+## Voraussetzungen
+
+- Node.js 18 oder höher
+- npm 8+
+
+## Einrichtung
 
 ```bash
+# 1. Abhängigkeiten installieren
+npm install
+
+# 2. Datenbank erstellen, Migrationen ausführen und Testdaten laden
+npm run db:setup
+
+# 3. Entwicklungsserver starten
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Anschließend die App unter **http://localhost:3000** aufrufen.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Rollenwechsel
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Oben rechts in der Navigationsleiste befindet sich ein Umschalter:
 
-## Learn More
+- **Spediteur-Modus** (Standard): Zeitplan ansehen, freie Zeitfenster buchen.
+- **Admin-Modus**: Zusätzlich Rampen und Konfiguration verwalten sowie alle Buchungen einsehen und Statuswechsel durchführen.
 
-To learn more about Next.js, take a look at the following resources:
+Die gewählte Rolle wird im LocalStorage gespeichert.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Verfügbare Skripte
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Befehl | Beschreibung |
+|---|---|
+| `npm run dev` | Entwicklungsserver starten |
+| `npm run build` | Produktions-Build erstellen |
+| `npm run start` | Produktionsserver starten |
+| `npm run db:setup` | Datenbank zurücksetzen, Migrationen und Seed ausführen |
+| `npm run db:seed` | Nur Testdaten einspielen |
+| `npm run db:migrate` | Neue Migration erstellen und anwenden |
 
-## Deploy on Vercel
+## Datenmodell (Kurzübersicht)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **Dock** – Rampe (Name, aktiv/inaktiv)
+- **SlotConfig** – Öffnungszeiten, Slot-Dauer, Pufferzeit, Arbeitstage
+- **Booking** – Buchung mit Status-Workflow:
+  `GEBUCHT → EINGETROFFEN → IN_ABFERTIGUNG → ABGESCHLOSSEN`
+  Jederzeit stornierbar: `→ STORNIERT`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Tech-Stack
+
+- Next.js 16 (App Router, TypeScript)
+- Tailwind CSS v4
+- Prisma ORM 7 + SQLite (via better-sqlite3 Adapter)
+- date-fns, Zod
