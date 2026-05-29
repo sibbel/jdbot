@@ -32,6 +32,11 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
 export async function DELETE(_: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id: idStr } = await params
   const id = parseInt(idStr)
-  await prisma.booking.delete({ where: { id } })
-  return NextResponse.json({ ok: true })
+  try {
+    await prisma.booking.delete({ where: { id } })
+    return NextResponse.json({ ok: true })
+  } catch (e: any) {
+    if (e.code === 'P2025') return NextResponse.json({ error: 'Buchung nicht gefunden.' }, { status: 404 })
+    throw e
+  }
 }

@@ -43,6 +43,7 @@ type BookingWithDock = BookingData & { dock?: { name: string } }
 export function BookingList({ docks }: BookingListProps) {
   const [bookings, setBookings] = useState<BookingWithDock[]>([])
   const [loading, setLoading] = useState(true)
+  const [changingId, setChangingId] = useState<number | null>(null)
   const [from, setFrom] = useState('')
   const [to, setTo] = useState('')
   const [dockId, setDockId] = useState('')
@@ -64,6 +65,7 @@ export function BookingList({ docks }: BookingListProps) {
   useEffect(() => { load() }, [])
 
   async function changeStatus(id: number, newStatus: string) {
+    setChangingId(id)
     const res = await fetch(`/api/bookings/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -77,6 +79,7 @@ export function BookingList({ docks }: BookingListProps) {
       const data = await res.json()
       showToast(data.error || 'Fehler.', 'error')
     }
+    setChangingId(null)
   }
 
   async function deleteBooking(id: number) {
@@ -163,7 +166,8 @@ export function BookingList({ docks }: BookingListProps) {
                           <button
                             key={t}
                             onClick={() => changeStatus(b.id, t)}
-                            className="text-xs text-blue-600 hover:underline"
+                            disabled={changingId === b.id}
+                            className="text-xs text-blue-600 hover:underline disabled:opacity-40 disabled:cursor-not-allowed"
                           >
                             {TRANSITION_LABELS[t] || t}
                           </button>
